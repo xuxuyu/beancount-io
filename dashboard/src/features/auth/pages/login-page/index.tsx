@@ -16,6 +16,9 @@ export default function LoginPage() {
   const search = useSearch({ from: "/auth/login/" });
   const { t } = useTranslations();
   const client = useApolloClient();
+  const signupEnabled = import.meta.env.VITE_SIGNUP_ENABLED !== "false";
+  const emailDeliveryEnabled =
+    import.meta.env.VITE_SIGNUP_OTP_DELIVERY !== "log";
 
   const { onSubmit, isLoading, serverError } = useLoginForm({
     onSuccess: async (token) => {
@@ -84,6 +87,8 @@ export default function LoginPage() {
               onSubmit={onSubmit}
               isLoading={isLoading}
               serverError={serverError}
+              showSignUpLink={signupEnabled}
+              showForgotPasswordLink={emailDeliveryEnabled}
             />
           </div>
         </div>
