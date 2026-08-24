@@ -31,13 +31,6 @@ volumes:
 
 services:
   dashboard:
-        condition: service_healthy
-      backend-v2:
-        condition: service_healthy
-      gitea:
-        condition: service_healthy
-
-  dashboard:
     build:
       context: ../../dashboard
       dockerfile: Dockerfile
