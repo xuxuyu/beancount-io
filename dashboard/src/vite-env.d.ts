@@ -13,6 +13,10 @@ interface ImportMetaEnv {
    * When unset, analytics is disabled.
    */
   readonly VITE_GA_MEASUREMENT_ID?: string;
+  /** Whether the public sign-up entry point is visible. */
+  readonly VITE_SIGNUP_ENABLED?: string;
+  /** Hides email-only recovery UI when OTP delivery uses operator logs. */
+  readonly VITE_SIGNUP_OTP_DELIVERY?: "email" | "log";
 }
 
 interface ImportMeta {
