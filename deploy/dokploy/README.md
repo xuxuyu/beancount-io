@@ -4,12 +4,12 @@ Dokploy-specific deployment for the self-hosted Beancount.io stack.
 
 ## Domains
 
-| Service | Hostname | Container port | Cloudflare |
-| --- | --- | ---: | --- |
-| Dashboard | `beancount.4ree.com` | 3000 | Proxied |
-| Backend API | `beancount-api.4ree.com` | 4104 | Proxied |
-| Gitea HTTP | `beancount-git.4ree.com` | 3000 | DNS only |
-| Git SSH (phase 2) | `beancount-git.4ree.com:2222` | 2222 | DNS only |
+| Service           | Hostname                      | Container port | Cloudflare |
+| ----------------- | ----------------------------- | -------------: | ---------- |
+| Dashboard         | `beancount.4ree.com`          |           3000 | Proxied    |
+| Backend API       | `beancount-api.4ree.com`      |           4104 | Proxied    |
+| Gitea HTTP        | `beancount-git.4ree.com`      |           3000 | DNS only   |
+| Git SSH (phase 2) | `beancount-git.4ree.com:2222` |           2222 | DNS only   |
 
 ## Create the Dokploy Compose service
 
@@ -41,6 +41,37 @@ COOKIE_SECRETS=["generated-cookie-secret"]
 ```
 
 Use a real administrator email for `GITEA_ADMIN_EMAIL`.
+
+## Bootstrap the first personal account
+
+Before deploying, restrict registration to your own login email:
+
+```dotenv
+SIGNUP_ENABLED=true
+SIGNUP_ALLOWED_EMAIL=your-login-email@example.com
+SIGNUP_OTP_DELIVERY=log
+```
+
+Open the dashboard, choose **Sign Up**, and submit that exact email address.
+Then open the `backend-v2` logs in Dokploy and search for:
+
+```text
+Self-hosted signup OTP generated
+```
+
+Enter the four-digit `otp` value within ten minutes. Treat this log entry as a
+temporary authentication secret and do not share it.
+
+After the account is created, change the deployment environment and redeploy:
+
+```dotenv
+SIGNUP_ENABLED=false
+SIGNUP_ALLOWED_EMAIL=
+```
+
+The backend then rejects every new registration, and the rebuilt dashboard
+hides the Sign Up link. Log delivery intentionally disables Forgot Password;
+keep the account password in a password manager.
 
 ## First deployment
 
