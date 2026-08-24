@@ -21,6 +21,12 @@ interface SendGridConfig {
   apiKey: string;
 }
 
+export interface AuthConfig {
+  signupEnabled: boolean;
+  signupAllowedEmail?: string;
+  signupOtpDelivery: "email" | "log";
+}
+
 interface AnalyticsConfig {
   gaMeasurementId: string;
 }
@@ -163,6 +169,7 @@ export interface ApiConfig {
 
 export interface AppConfig {
   api: ApiConfig;
+  auth: AuthConfig;
   sshProxy: SshProxyConfig;
   env: Environment;
   project: string;
@@ -302,6 +309,13 @@ const oauthSigningKeys = getOptionalJwks(environment);
 export const config: AppConfig = {
   api: {
     scopeEnforcement: "shadow",
+  },
+  auth: {
+    signupEnabled: process.env.SIGNUP_ENABLED !== "false",
+    signupAllowedEmail:
+      process.env.SIGNUP_ALLOWED_EMAIL?.trim().toLowerCase() || undefined,
+    signupOtpDelivery:
+      process.env.SIGNUP_OTP_DELIVERY === "log" ? "log" : "email",
   },
   env: environment,
   project: "beancount-io",
