@@ -25,6 +25,8 @@ COPY . .
 ARG VITE_API_URL
 ARG VITE_SSR_API_URL
 ARG VITE_GA_MEASUREMENT_ID
+ARG VITE_SIGNUP_ENABLED
+ARG VITE_SIGNUP_OTP_DELIVERY
 RUN set -eu; \
     : > .env.production.local; \
     if [ -n "${VITE_API_URL:-}" ]; then \
@@ -32,7 +34,11 @@ RUN set -eu; \
     if [ -n "${VITE_SSR_API_URL:-}" ]; then \
       echo "VITE_SSR_API_URL=$VITE_SSR_API_URL" >> .env.production.local; fi; \
     if [ -n "${VITE_GA_MEASUREMENT_ID:-}" ]; then \
-      echo "VITE_GA_MEASUREMENT_ID=$VITE_GA_MEASUREMENT_ID" >> .env.production.local; fi
+      echo "VITE_GA_MEASUREMENT_ID=$VITE_GA_MEASUREMENT_ID" >> .env.production.local; fi; \
+    if [ -n "${VITE_SIGNUP_ENABLED:-}" ]; then \
+      echo "VITE_SIGNUP_ENABLED=$VITE_SIGNUP_ENABLED" >> .env.production.local; fi; \
+    if [ -n "${VITE_SIGNUP_OTP_DELIVERY:-}" ]; then \
+      echo "VITE_SIGNUP_OTP_DELIVERY=$VITE_SIGNUP_OTP_DELIVERY" >> .env.production.local; fi
 
 # Build the application (produces .output/)
 RUN yarn build
