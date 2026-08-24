@@ -144,7 +144,11 @@ export class AuthService implements IAuthService {
     private readonly sendgrid: ISendGrid,
     private readonly stripe: IStripeService,
     private readonly favaClientFactory: IFavaClientFactory,
-    private readonly config: Pick<AppConfig, "favaApi" | "dashboard" | "gitea">,
+    private readonly config: Pick<
+      AppConfig,
+      "favaApi" | "dashboard" | "gitea"
+    > &
+      Partial<Pick<AppConfig, "auth">>,
   ) {}
 
   public registerUser = async (
@@ -200,20 +204,22 @@ export class AuthService implements IAuthService {
           throw error;
         }
 
-        delayRun<void>(async () => {
-          const welcomeParams = {
-            firstName,
-            dashboardUrl: "https://beancount.io/ledger",
-            mobileAppUrl: "http://onelink.to/v3rz2v",
-            helpCenterUrl: "https://beancount.io/docs/help-center",
-          };
-          await this.sendgrid.sendMail({
-            to: email,
-            subject: "Welcome to Beancount.io!",
-            html: renderWelcomeHtml(welcomeParams),
-            text: renderWelcomeText(welcomeParams),
+        if (this.config.auth?.signupOtpDelivery !== "log") {
+          delayRun<void>(async () => {
+            const welcomeParams = {
+              firstName,
+              dashboardUrl: `${this.config.dashboard.url}/ledger`,
+              mobileAppUrl: "http://onelink.to/v3rz2v",
+              helpCenterUrl: `${this.config.dashboard.url}/docs/help-center`,
+            };
+            await this.sendgrid.sendMail({
+              to: email,
+              subject: "Welcome to Beancount.io!",
+              html: renderWelcomeHtml(welcomeParams),
+              text: renderWelcomeText(welcomeParams),
+            });
           });
-        });
+        }
 
         return { token, expireAt };
       });
@@ -313,6 +319,12 @@ export class AuthService implements IAuthService {
     email: string,
     ip?: string,
   ): Promise<void> => {
+    if (this.config.auth?.signupOtpDelivery === "log") {
+      throw new ForbiddenError(
+        "Password reset email delivery is disabled; contact the administrator",
+      );
+    }
+
     // Rate limit: 2 requests per minute per email
     checkRateLimit(`forgot-password:${email}`, {
       windowMs: 60000,
@@ -436,6 +448,14 @@ export class AuthService implements IAuthService {
       throw new BadUserInputError("Email is invalid");
     }
 
+    if (this.config.auth?.signupEnabled === false) {
+      throw new ForbiddenError("Registration is disabled");
+    }
+    const allowedEmail = this.config.auth?.signupAllowedEmail;
+    if (allowedEmail && normalizedEmail !== allowedEmail) {
+      throw new ForbiddenError("Registration is not available for this email");
+    }
+
     // Rate limit: 5 signup requests per hour per email
     checkRateLimit(`signup:${normalizedEmail}`, {
       windowMs: 60 * 60 * 1000,
@@ -513,13 +533,23 @@ export class AuthService implements IAuthService {
       10, // 10 minutes expiration
     );
 
-    const preSignupParams = { otp: session.otp };
-    await this.sendgrid.sendMail({
-      to: normalizedEmail,
-      subject: "Verify Your Email - Beancount.io",
-      html: renderSignupOtpHtml(preSignupParams),
-      text: renderSignupOtpText(preSignupParams),
-    });
+    if (this.config.auth?.signupOtpDelivery === "log") {
+      // Explicit self-hosted bootstrap mode. The OTP is intentionally written
+      // only to operator-controlled backend logs and expires with the session.
+      logger.warn("Self-hosted signup OTP generated", {
+        email: normalizedEmail,
+        otp: session.otp,
+        expireAt: session.expireAt,
+      });
+    } else {
+      const preSignupParams = { otp: session.otp };
+      await this.sendgrid.sendMail({
+        to: normalizedEmail,
+        subject: "Verify Your Email - Beancount.io",
+        html: renderSignupOtpHtml(preSignupParams),
+        text: renderSignupOtpText(preSignupParams),
+      });
+    }
 
     return session.id;
   };
