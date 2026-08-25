@@ -27,7 +27,7 @@ describe("cookie-utils", () => {
   describe("setAuthCookie", () => {
     it("should set cookie with secure=true for https context in production", () => {
       const expireAt = new Date(Date.now() + 60 * 60 * 1000);
-      setAuthCookie(mockCtx, "mytoken", expireAt, true);
+      setAuthCookie(mockCtx, "mytoken", expireAt, true, ".4ree.com");
       expect(mockCtx.cookies.set).toHaveBeenCalledWith(
         COOKIE_NAME,
         "mytoken",
@@ -36,7 +36,7 @@ describe("cookie-utils", () => {
           secure: true,
           sameSite: "lax",
           path: "/",
-          domain: ".beancount.io",
+          domain: ".4ree.com",
         }),
       );
     });
@@ -47,7 +47,7 @@ describe("cookie-utils", () => {
         URL: new URL("http://localhost:4104"),
       } as any;
       const expireAt = new Date(Date.now() + 60 * 60 * 1000);
-      setAuthCookie(httpCtx, "mytoken", expireAt, false);
+      setAuthCookie(httpCtx, "mytoken", expireAt, false, ".4ree.com");
       expect(httpCtx.cookies.set).toHaveBeenCalledWith(
         COOKIE_NAME,
         "mytoken",
@@ -60,7 +60,7 @@ describe("cookie-utils", () => {
 
     it("should derive maxAge from the token's own expireAt", () => {
       const expireAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-      setAuthCookie(mockCtx, "mytoken", expireAt, true);
+      setAuthCookie(mockCtx, "mytoken", expireAt, true, ".4ree.com");
       const options = mockCtx.cookies.set.mock.calls[0][2];
       expect(options.maxAge).toBeGreaterThan(4 * 60 * 1000);
       expect(options.maxAge).toBeLessThanOrEqual(5 * 60 * 1000);
@@ -69,10 +69,16 @@ describe("cookie-utils", () => {
 
   describe("clearAuthCookie", () => {
     it("should call ctx.cookies.set with empty string and maxAge 0", () => {
-      clearAuthCookie(mockCtx);
-      expect(mockCtx.cookies.set).toHaveBeenCalledWith(COOKIE_NAME, "", {
-        maxAge: 0,
-      });
+      clearAuthCookie(mockCtx, ".4ree.com");
+      expect(mockCtx.cookies.set).toHaveBeenCalledWith(
+        COOKIE_NAME,
+        "",
+        expect.objectContaining({
+          maxAge: 0,
+          path: "/",
+          domain: ".4ree.com",
+        }),
+      );
     });
   });
 

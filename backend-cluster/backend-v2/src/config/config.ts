@@ -22,6 +22,7 @@ interface SendGridConfig {
 }
 
 export interface AuthConfig {
+  cookieDomain?: string;
   signupEnabled: boolean;
   signupAllowedEmail?: string;
   signupOtpDelivery: "email" | "log";
@@ -211,6 +212,29 @@ function getEnvironment(env: unknown): Environment {
   }
 }
 
+export function getAuthCookieDomain(
+  value: string | undefined,
+  env: Environment,
+): string | undefined {
+  const configured = value?.trim();
+  if (!configured) {
+    return env === "production" ? ".beancount.io" : undefined;
+  }
+
+  const hostname = configured.replace(/^\./, "").toLowerCase();
+  const validHostname =
+    /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(
+      hostname,
+    );
+  if (!validHostname) {
+    throw new Error(
+      "AUTH_COOKIE_DOMAIN must be a registrable domain such as .example.com",
+    );
+  }
+
+  return `.${hostname}`;
+}
+
 export function getOAuthPublicUrl(
   value: string | undefined,
   fallback: string,
@@ -311,6 +335,10 @@ export const config: AppConfig = {
     scopeEnforcement: "shadow",
   },
   auth: {
+    cookieDomain: getAuthCookieDomain(
+      process.env.AUTH_COOKIE_DOMAIN,
+      environment,
+    ),
     signupEnabled: process.env.SIGNUP_ENABLED !== "false",
     signupAllowedEmail:
       process.env.SIGNUP_ALLOWED_EMAIL?.trim().toLowerCase() || undefined,

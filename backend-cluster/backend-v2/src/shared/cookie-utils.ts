@@ -16,11 +16,12 @@ export function setAuthCookie(
   token: string,
   expireAt: Date,
   isProduction: boolean,
+  cookieDomain?: string,
 ): void {
   ctx.cookies.set(
     COOKIE_NAME,
     token,
-    getCookieOptions(ctx, expireAt, isProduction),
+    getCookieOptions(ctx, expireAt, isProduction, cookieDomain),
   );
 }
 
@@ -28,6 +29,7 @@ function getCookieOptions(
   context: Context,
   expireAt: Date,
   isProduction: boolean,
+  cookieDomain?: string,
 ): CookieOptions {
   return {
     // Mirrors the JWT's own expiry so the cookie never outlives the token it carries.
@@ -36,14 +38,18 @@ function getCookieOptions(
     secure: context.URL.protocol === "https:", // HTTPS only in production
     sameSite: "lax", // CSRF protection
     path: "/",
-    // Set domain for cross-subdomain access in production
-    // .beancount.io allows cookie to be shared across api.v3.beancount.io, dashboard.v3.beancount.io, etc.
-    domain: isProduction ? ".beancount.io" : undefined,
+    // Share authentication between the configured dashboard and API sibling
+    // domains. Development remains host-only.
+    domain: isProduction ? cookieDomain : undefined,
   };
 }
 
-export function clearAuthCookie(ctx: Context): void {
-  ctx.cookies.set(COOKIE_NAME, "", { maxAge: 0 });
+export function clearAuthCookie(ctx: Context, cookieDomain?: string): void {
+  ctx.cookies.set(COOKIE_NAME, "", {
+    maxAge: 0,
+    path: "/",
+    domain: cookieDomain,
+  });
 }
 
 /**

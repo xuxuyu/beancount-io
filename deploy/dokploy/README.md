@@ -40,6 +40,15 @@ For `COOKIE_SECRETS`, preserve the JSON array syntax:
 COOKIE_SECRETS=["generated-cookie-secret"]
 ```
 
+The dashboard and API use sibling hostnames, so the authentication cookie must
+be shared on their parent domain:
+
+```dotenv
+AUTH_COOKIE_DOMAIN=.4ree.com
+```
+
+Do not enter a URL or either service hostname here.
+
 Use a real administrator email for `GITEA_ADMIN_EMAIL`.
 
 ## Bootstrap the first personal account

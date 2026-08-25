@@ -100,6 +100,7 @@ export async function registerGraphqlTransport(
           token,
           new Date(decoded.exp * 1000),
           config.env === "production",
+          config.auth.cookieDomain,
         );
       }
     }

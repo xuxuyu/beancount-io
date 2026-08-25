@@ -1,6 +1,7 @@
 import {
   assertOAuthInteractionHost,
   config,
+  getAuthCookieDomain,
   getOAuthPublicUrl,
 } from "./config";
 
@@ -46,6 +47,29 @@ describe("config", () => {
 
   it("should have correct dashboard URL default", () => {
     expect(config.dashboard.url).toBe("https://beancount.io");
+  });
+
+  describe("authentication cookie domain", () => {
+    it("normalizes a configured parent domain", () => {
+      expect(getAuthCookieDomain("4ree.com", "production")).toBe(".4ree.com");
+      expect(getAuthCookieDomain(".4ree.com", "production")).toBe(".4ree.com");
+    });
+
+    it("keeps the hosted production default", () => {
+      expect(getAuthCookieDomain(undefined, "production")).toBe(
+        ".beancount.io",
+      );
+      expect(getAuthCookieDomain(undefined, "development")).toBeUndefined();
+    });
+
+    it("rejects URLs and malformed domains", () => {
+      expect(() =>
+        getAuthCookieDomain("https://4ree.com", "production"),
+      ).toThrow("AUTH_COOKIE_DOMAIN");
+      expect(() => getAuthCookieDomain("localhost", "production")).toThrow(
+        "AUTH_COOKIE_DOMAIN",
+      );
+    });
   });
 
   describe("OAuth public URL validation", () => {
