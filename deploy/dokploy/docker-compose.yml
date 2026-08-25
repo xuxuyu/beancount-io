@@ -146,7 +146,9 @@ services:
       # To use a custom endpoint, export a non-empty value before Compose runs.
       ANTHROPIC_BASE_URL:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      OPENAI_API_MODE: ${OPENAI_API_MODE:-responses}
       TEMP_ASSETS_AWS_S3_REGION: ${TEMP_ASSETS_AWS_S3_REGION:-us-east-1}
       TEMP_ASSETS_AWS_S3_BUCKET: ${TEMP_ASSETS_AWS_S3_BUCKET:-}
       TEMP_ASSETS_AWS_S3_ACCESS_KEY_ID: ${TEMP_ASSETS_AWS_S3_ACCESS_KEY_ID:-}

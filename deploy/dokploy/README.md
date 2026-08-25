@@ -64,6 +64,21 @@ Supported values are `FREE`, `PREMIUM`, `GROWTH`, `ORGANIZATION`, and
 `ENTERPRISE`. The override is deployment-wide; omit it only when this instance
 is configured to use real Stripe subscriptions.
 
+## OpenAI-compatible AI provider
+
+To use a third-party endpoint that implements OpenAI Chat Completions, set:
+
+```dotenv
+OPENAI_API_KEY=configure-this-secret-in-dokploy
+OPENAI_BASE_URL=https://gateway.example.com/v1
+OPENAI_MODEL=provider-model-id
+OPENAI_API_MODE=chat
+```
+
+`OPENAI_BASE_URL` must include the provider's API version path, normally `/v1`.
+Use `OPENAI_API_MODE=responses` only when the endpoint implements OpenAI's
+Responses API. The API key is read only by `backend-v2`; never commit it.
+
 ## Bootstrap the first personal account
 
 Before deploying, restrict registration to your own login email:

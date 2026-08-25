@@ -15,6 +15,54 @@ function isNonRetriableError(err: unknown): boolean {
 }
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
+const DEFAULT_OPENAI_MODEL = "gpt-4o";
+
+export type OpenAIApiMode = "chat" | "responses";
+
+export type OpenAIProviderSettings = {
+  apiKey?: string;
+  baseURL?: string;
+  model: string;
+  apiMode: OpenAIApiMode;
+};
+
+function normalizeOpenAIBaseURL(value: string | undefined): string | undefined {
+  const configured = value?.trim().replace(/\/+$/, "");
+  if (!configured) return undefined;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(configured);
+  } catch {
+    throw new Error("OPENAI_BASE_URL must be a valid HTTP(S) URL");
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("OPENAI_BASE_URL must be a valid HTTP(S) URL");
+  }
+
+  return configured;
+}
+
+export function getOpenAIProviderSettings(
+  env: NodeJS.ProcessEnv = process.env,
+): OpenAIProviderSettings {
+  const configuredMode = env.OPENAI_API_MODE?.trim().toLowerCase();
+  if (
+    configuredMode &&
+    configuredMode !== "chat" &&
+    configuredMode !== "responses"
+  ) {
+    throw new Error('OPENAI_API_MODE must be either "chat" or "responses"');
+  }
+
+  return {
+    apiKey: env.OPENAI_API_KEY?.trim() || undefined,
+    baseURL: normalizeOpenAIBaseURL(env.OPENAI_BASE_URL),
+    model: env.OPENAI_MODEL?.trim() || DEFAULT_OPENAI_MODEL,
+    apiMode: configuredMode || "responses",
+  };
+}
 
 /**
  * Anthropic model for a direct (non-BlockEden) call.
@@ -52,16 +100,16 @@ function createDirectAnthropicModel(key: string): LanguageModelV4 {
  *
  * Each provider goes direct to the real API when its key is set —
  * `ANTHROPIC_API_KEY` (createAnthropic defaults to api.anthropic.com) and
- * `OPENAI_API_KEY` (createOpenAI defaults to api.openai.com) — otherwise it is
- * routed through the BlockEden gateway with `accessKey` in the URL path. A
- * provider is only included when it has usable credentials, so the fallback
- * order (Anthropic → OpenAI) is preserved. Connection-level failures (rate
- * limits, server errors) are caught before streaming begins, so the next
- * provider is tried transparently.
+ * `OPENAI_API_KEY` (optionally with `OPENAI_BASE_URL`, `OPENAI_MODEL`, and
+ * `OPENAI_API_MODE`) — otherwise it is routed through the BlockEden gateway
+ * with `accessKey` in the URL path. A provider is only included when it has
+ * usable credentials, so the fallback order (Anthropic → OpenAI) is preserved.
+ * Connection-level failures (rate limits, server errors) are caught before
+ * streaming begins, so the next provider is tried transparently.
  */
 export function createFallbackLanguageModel(accessKey: string): LanguageModel {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  const openaiKey = process.env.OPENAI_API_KEY;
+  const openaiSettings = getOpenAIProviderSettings();
 
   const providers: LanguageModelV4[] = [];
 
@@ -79,8 +127,16 @@ export function createFallbackLanguageModel(accessKey: string): LanguageModel {
   }
 
   // OpenAI (fallback): direct when OPENAI_API_KEY is set, else via BlockEden.
-  if (openaiKey) {
-    providers.push(createOpenAI({ apiKey: openaiKey })("gpt-4o"));
+  if (openaiSettings.apiKey) {
+    const openai = createOpenAI({
+      apiKey: openaiSettings.apiKey,
+      ...(openaiSettings.baseURL ? { baseURL: openaiSettings.baseURL } : {}),
+    });
+    providers.push(
+      openaiSettings.apiMode === "chat"
+        ? openai.chat(openaiSettings.model)
+        : openai(openaiSettings.model),
+    );
   } else if (accessKey) {
     providers.push(
       createOpenAI({
