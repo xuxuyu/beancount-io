@@ -12,11 +12,7 @@ import { recommendAccounts } from "../utils/recommend-accounts";
 import { categorizeTransactions } from "../utils/categorize-transactions";
 import { parseLedgerId } from "@/shared/str";
 import { DirectiveType } from "@/foundation/fava";
-import {
-  ResourceLimitReachedError,
-  BadUserInputError,
-  InternalServerError,
-} from "@/shared/errors";
+import { ResourceLimitReachedError, BadUserInputError } from "@/shared/errors";
 import type { RecentTransactionExample } from "../types";
 
 // Domain types (transport-agnostic, no TypeGraphQL decorators)
@@ -221,12 +217,6 @@ export class LLMService implements ILLMService {
         "AI CFO Token",
         usageCheck.maxAllowed,
         usageCheck.currentCount,
-      );
-    }
-
-    if (!this.config.blockeden.accessKey) {
-      throw new InternalServerError(
-        "LLM categorization is not configured. Please set BLOCKEDEN_ACCESS_KEY environment variable.",
       );
     }
 
