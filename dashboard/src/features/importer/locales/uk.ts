@@ -14,7 +14,7 @@ const ukImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Цей тип файлу не підтримується. Будь ласка, використовуйте CSV, PDF, OFX або зображення (PNG, JPG).",
+      "Цей тип файлу не підтримується. Будь ласка, використовуйте CSV, Excel, PDF, OFX або зображення (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const ukImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Підтримує CSV, PDF, OFX та зображення до 10 МБ",
+    message: "Підтримує CSV, Excel, PDF, OFX та зображення до 10 МБ",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const ukImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF, OFX-файли та зображення аналізуються автоматично за допомогою ШІ — без ручного форматування.",
+      "Excel, PDF, OFX-файли та зображення аналізуються автоматично за допомогою ШІ — без ручного форматування.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -96,7 +96,7 @@ const ukImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Автоматично аналізуйте PDF, OFX та зображення за допомогою ШІ",
+    message: "Автоматично аналізуйте Excel, PDF, OFX та зображення за допомогою ШІ",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

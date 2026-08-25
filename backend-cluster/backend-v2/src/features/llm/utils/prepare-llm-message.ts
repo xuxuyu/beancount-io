@@ -1,9 +1,10 @@
 import { type ImagePart, type FilePart, type ModelMessage } from "ai";
 import { classifyFile, resolveMediaType } from "./media-type-utils";
-import { ServiceUnavailableError } from "@/shared/errors";
+import { BadUserInputError, ServiceUnavailableError } from "@/shared/errors";
 import { logger } from "@/shared/logger";
 import { decodeUploadedText } from "./decode-text";
 import { extractPdfText, hasUsefulPdfText } from "./extract-pdf-text";
+import { extractSpreadsheetText } from "./extract-spreadsheet-text";
 
 const prepareMessageLogger = logger.child({ module: "prepare-llm-message" });
 
@@ -20,12 +21,14 @@ export async function prepareLlmMessage({
   mediaType,
   prompts,
   preferPdfText = false,
+  preferSpreadsheetText = false,
 }: {
   fileUrl: string;
   format: string;
   mediaType?: string;
   prompts: PromptBuilders;
   preferPdfText?: boolean;
+  preferSpreadsheetText?: boolean;
 }): Promise<{
   system: string;
   messages: ModelMessage[];
@@ -60,6 +63,29 @@ export async function prepareLlmMessage({
   }
 
   const resolvedMediaType = resolveMediaType(format, mediaType);
+  if (
+    preferSpreadsheetText &&
+    [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+    ].includes(resolvedMediaType)
+  ) {
+    let spreadsheetText: string;
+    try {
+      spreadsheetText = extractSpreadsheetText(await downloadBytes());
+    } catch (error) {
+      throw new BadUserInputError(
+        error instanceof Error
+          ? error.message
+          : "Spreadsheet could not be read",
+      );
+    }
+    prepareMessageLogger.info("Using locally extracted spreadsheet text", {
+      characters: spreadsheetText.length,
+    });
+    return buildTextResult(spreadsheetText);
+  }
+
   if (preferPdfText && resolvedMediaType === "application/pdf") {
     const pdfBytes = await downloadBytes();
     try {

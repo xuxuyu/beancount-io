@@ -14,7 +14,7 @@ const deImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Dieser Dateityp wird nicht unterstützt. Bitte verwenden Sie eine CSV-, PDF-, OFX- oder Bilddatei (PNG, JPG).",
+      "Dieser Dateityp wird nicht unterstützt. Bitte verwenden Sie eine CSV-, Excel-, PDF-, OFX- oder Bilddatei (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const deImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Unterstützt CSV, PDF, OFX und Bilddateien bis 10 MB",
+    message: "Unterstützt CSV, Excel, PDF, OFX und Bilddateien bis 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const deImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDFs, OFX-Dateien und Bilder werden automatisch mit KI analysiert — keine manuelle Formatierung nötig.",
+      "Excel-, PDF-, OFX-Dateien und Bilder werden automatisch mit KI analysiert — keine manuelle Formatierung nötig.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -97,7 +97,7 @@ const deImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "PDF-, OFX- und Bilddateien automatisch mit KI analysieren",
+    message: "Excel-, PDF-, OFX- und Bilddateien automatisch mit KI analysieren",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

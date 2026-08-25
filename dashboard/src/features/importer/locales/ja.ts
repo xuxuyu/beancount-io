@@ -11,7 +11,7 @@ const jaImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "このファイル形式はサポートされていません。CSV、PDF、OFX、または画像ファイル（PNG、JPG）を使用してください。",
+      "このファイル形式はサポートされていません。CSV、Excel、PDF、OFX、または画像ファイル（PNG、JPG）を使用してください。",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -27,7 +27,7 @@ const jaImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "CSV、PDF、OFX、および最大10MBの画像ファイルに対応",
+    message: "CSV、Excel、PDF、OFX、および最大10MBの画像ファイルに対応",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -45,7 +45,7 @@ const jaImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF、OFXファイル、画像はAIで自動的に解析されます \u2014 手動フォーマット不要。",
+      "Excel、PDF、OFXファイル、画像はAIで自動的に解析されます \u2014 手動フォーマット不要。",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -93,7 +93,7 @@ const jaImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "AIでPDF、OFX、画像ファイルを自動解析",
+    message: "AIでExcel、PDF、OFX、画像ファイルを自動解析",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

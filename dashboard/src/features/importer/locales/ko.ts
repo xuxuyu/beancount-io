@@ -10,7 +10,7 @@ const koImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "이 파일 형식은 지원되지 않습니다. CSV, PDF, OFX, 또는 이미지 파일(PNG, JPG)을 사용해 주세요.",
+      "이 파일 형식은 지원되지 않습니다. CSV, Excel, PDF, OFX, 또는 이미지 파일(PNG, JPG)을 사용해 주세요.",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -26,7 +26,7 @@ const koImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "CSV, PDF, OFX, 최대 10MB 이미지 파일 지원",
+    message: "CSV, Excel, PDF, OFX, 최대 10MB 이미지 파일 지원",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -44,7 +44,7 @@ const koImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF, OFX 파일, 이미지는 AI로 자동 파싱됩니다 \u2014 수동 형식 지정 불필요.",
+      "Excel, PDF, OFX 파일, 이미지는 AI로 자동 파싱됩니다 \u2014 수동 형식 지정 불필요.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -92,7 +92,7 @@ const koImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "AI로 PDF, OFX, 이미지 파일을 자동 파싱",
+    message: "AI로 Excel, PDF, OFX, 이미지 파일을 자동 파싱",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

@@ -14,7 +14,7 @@ const ruImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Этот тип файла не поддерживается. Пожалуйста, используйте CSV, PDF, OFX или изображение (PNG, JPG).",
+      "Этот тип файла не поддерживается. Пожалуйста, используйте CSV, Excel, PDF, OFX или изображение (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const ruImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Поддерживает CSV, PDF, OFX и изображения до 10 МБ",
+    message: "Поддерживает CSV, Excel, PDF, OFX и изображения до 10 МБ",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const ruImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF, OFX-файлы и изображения анализируются автоматически с помощью ИИ — без ручного форматирования.",
+      "Excel, PDF, OFX-файлы и изображения анализируются автоматически с помощью ИИ — без ручного форматирования.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -97,7 +97,7 @@ const ruImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Автоматически анализируйте PDF, OFX и изображения с помощью ИИ",
+    message: "Автоматически анализируйте Excel, PDF, OFX и изображения с помощью ИИ",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

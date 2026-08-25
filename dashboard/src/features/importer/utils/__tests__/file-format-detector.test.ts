@@ -66,8 +66,26 @@ describe("file-format-detector", () => {
       expect(detectFileFormat(file)).toBe("image");
     });
 
-    it("should return 'unknown' for unsupported formats", () => {
+    it("should detect XLSX by extension even with a legacy MIME type", () => {
       const file = makeFile("data.xlsx", "application/vnd.ms-excel");
+      expect(detectFileFormat(file)).toBe("xlsx");
+    });
+
+    it("should detect XLS by extension", () => {
+      const file = makeFile("data.xls", "");
+      expect(detectFileFormat(file)).toBe("xls");
+    });
+
+    it("should detect XLSX by MIME type", () => {
+      const file = makeFile(
+        "statement",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      expect(detectFileFormat(file)).toBe("xlsx");
+    });
+
+    it("should return 'unknown' for unsupported formats", () => {
+      const file = makeFile("data.zip", "application/zip");
       expect(detectFileFormat(file)).toBe("unknown");
     });
 
@@ -95,6 +113,11 @@ describe("file-format-detector", () => {
       expect(getFormatDisplayName("ofx")).toBe("OFX");
     });
 
+    it("should return 'Excel' for Excel formats", () => {
+      expect(getFormatDisplayName("xlsx")).toBe("Excel");
+      expect(getFormatDisplayName("xls")).toBe("Excel");
+    });
+
     it("should return 'Image' for image format", () => {
       expect(getFormatDisplayName("image")).toBe("Image");
     });
@@ -105,7 +128,14 @@ describe("file-format-detector", () => {
   });
 
   describe("isSupportedFormat", () => {
-    const supportedFormats: FileFormat[] = ["csv", "pdf", "ofx", "image"];
+    const supportedFormats: FileFormat[] = [
+      "csv",
+      "pdf",
+      "ofx",
+      "xlsx",
+      "xls",
+      "image",
+    ];
 
     supportedFormats.forEach((format) => {
       it(`should return true for supported format: ${format}`, () => {
@@ -129,6 +159,15 @@ describe("file-format-detector", () => {
 
     it("should return 'application/x-ofx' for ofx format", () => {
       expect(getMimeType("bank.ofx", "ofx")).toBe("application/x-ofx");
+    });
+
+    it("should return Excel MIME types", () => {
+      expect(getMimeType("data.xlsx", "xlsx")).toBe(
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      expect(getMimeType("data.xls", "xls")).toBe(
+        "application/vnd.ms-excel",
+      );
     });
 
     it("should return 'image/png' for png image", () => {

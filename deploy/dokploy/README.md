@@ -113,6 +113,10 @@ Poppler and then use the same bounded-batch path. This avoids sending every PDF
 page image through an OpenAI-compatible gateway. Scanned PDFs without a usable
 text layer still fall back to Responses file input.
 
+Excel `.xlsx` and legacy `.xls` statements are read locally. Each non-empty
+worksheet is labelled and converted to CSV text before using the same bounded
+LLM batches; formulas and macros are not executed.
+
 ## Bootstrap the first personal account
 
 Before deploying, restrict registration to your own login email:

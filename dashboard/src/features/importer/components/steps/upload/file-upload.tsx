@@ -33,7 +33,7 @@ export function FileUpload({ onParsed, onFileSelected }: FileUploadProps) {
       }
 
       // Validate file type (accept multiple formats)
-      const allowedExtensions = ["csv", "pdf", "ofx", "qfx"];
+      const allowedExtensions = ["csv", "pdf", "ofx", "qfx", "xlsx", "xls"];
       const extension = file.name.split(".").pop()?.toLowerCase();
       const isImage = file.type.startsWith("image/");
       if (!isImage && (!extension || !allowedExtensions.includes(extension))) {
@@ -117,7 +117,7 @@ export function FileUpload({ onParsed, onFileSelected }: FileUploadProps) {
           type="file"
           id="csv-upload"
           className="hidden"
-          accept=".csv,.pdf,.ofx,.qfx,text/csv,application/pdf,image/*"
+          accept=".csv,.pdf,.ofx,.qfx,.xlsx,.xls,text/csv,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,image/*"
           onChange={handleFileInput}
           disabled={isLoading}
         />

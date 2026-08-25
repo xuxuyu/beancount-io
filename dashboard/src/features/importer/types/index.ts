@@ -2,7 +2,14 @@
  * Types for multi-format importer feature
  */
 
-export type FileFormat = "csv" | "pdf" | "ofx" | "image" | "unknown";
+export type FileFormat =
+  | "csv"
+  | "pdf"
+  | "ofx"
+  | "xlsx"
+  | "xls"
+  | "image"
+  | "unknown";
 
 export type ParseMethod = "client-csv" | "server-llm" | "failed";
 

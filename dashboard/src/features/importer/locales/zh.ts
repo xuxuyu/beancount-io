@@ -12,7 +12,7 @@ const zhImporter: Record<string, TranslationEntry> = {
     description: "Error message when file size exceeds limit",
   },
   "importer.upload.unsupportedFormatError": {
-    message: "不支持此文件类型。请使用 CSV、PDF、OFX 或图像文件（PNG、JPG）。",
+    message: "不支持此文件类型。请使用 CSV、Excel、PDF、OFX 或图像文件（PNG、JPG）。",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -28,7 +28,7 @@ const zhImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "支持 CSV、PDF、OFX 和图像文件，最大 10 MB",
+    message: "支持 CSV、Excel、PDF、OFX 和图像文件，最大 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -44,7 +44,7 @@ const zhImporter: Record<string, TranslationEntry> = {
     description: "Instructions for CSV file format",
   },
   "importer.upload.aiProcessingHint": {
-    message: "PDF、OFX 文件和图像通过 AI 自动解析——无需手动格式化。",
+    message: "Excel、PDF、OFX 文件和图像通过 AI 自动解析——无需手动格式化。",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -92,7 +92,7 @@ const zhImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "使用AI自动解析PDF、OFX和图像文件",
+    message: "使用AI自动解析Excel、PDF、OFX和图像文件",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

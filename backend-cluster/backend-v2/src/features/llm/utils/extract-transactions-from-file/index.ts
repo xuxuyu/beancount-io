@@ -50,6 +50,7 @@ export async function extractTransactionsFromFile({
     format,
     mediaType,
     preferPdfText: true,
+    preferSpreadsheetText: true,
     prompts: {
       system: buildTransactionSystemPrompt,
       text: buildTransactionTextAnalysisPrompt,

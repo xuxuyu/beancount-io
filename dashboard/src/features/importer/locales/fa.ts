@@ -14,7 +14,7 @@ const faImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "این نوع فایل پشتیبانی نمی‌شود. لطفاً از فایل CSV، PDF، OFX یا تصویر (PNG، JPG) استفاده کنید.",
+      "این نوع فایل پشتیبانی نمی‌شود. لطفاً از فایل CSV، Excel، PDF، OFX یا تصویر (PNG، JPG) استفاده کنید.",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const faImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "پشتیبانی از CSV، PDF، OFX و تصاویر تا 10 مگابایت",
+    message: "پشتیبانی از CSV، Excel، PDF، OFX و تصاویر تا 10 مگابایت",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const faImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "فایل‌های PDF، OFX و تصاویر به‌طور خودکار با هوش مصنوعی تجزیه می‌شوند — بدون نیاز به قالب‌بندی دستی.",
+      "فایل‌های Excel، PDF، OFX و تصاویر به‌طور خودکار با هوش مصنوعی تجزیه می‌شوند — بدون نیاز به قالب‌بندی دستی.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -97,7 +97,7 @@ const faImporter: Record<string, TranslationEntry> = {
   },
   "importer.error.upgradeDescription": {
     message:
-      "فایل‌های PDF، OFX و تصاویر را به‌طور خودکار با هوش مصنوعی تجزیه کنید",
+      "فایل‌های Excel، PDF، OFX و تصاویر را به‌طور خودکار با هوش مصنوعی تجزیه کنید",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

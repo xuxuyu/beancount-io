@@ -14,7 +14,7 @@ const nlImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Dit bestandstype wordt niet ondersteund. Gebruik een CSV-, PDF-, OFX- of afbeeldingsbestand (PNG, JPG).",
+      "Dit bestandstype wordt niet ondersteund. Gebruik een CSV-, Excel-, PDF-, OFX- of afbeeldingsbestand (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const nlImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Ondersteunt CSV, PDF, OFX en afbeeldingen tot 10 MB",
+    message: "Ondersteunt CSV, Excel, PDF, OFX en afbeeldingen tot 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const nlImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF's, OFX-bestanden en afbeeldingen worden automatisch geanalyseerd met AI — geen handmatige opmaak nodig.",
+      "Excel-, PDF-, OFX-bestanden en afbeeldingen worden automatisch geanalyseerd met AI — geen handmatige opmaak nodig.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -96,7 +96,7 @@ const nlImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Analyseer PDF-, OFX- en afbeeldingsbestanden automatisch met AI",
+    message: "Analyseer Excel-, PDF-, OFX- en afbeeldingsbestanden automatisch met AI",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

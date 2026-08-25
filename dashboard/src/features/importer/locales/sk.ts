@@ -13,7 +13,7 @@ const skImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Tento typ súboru nie je podporovaný. Prosím, použite súbor CSV, PDF, OFX alebo obrázok (PNG, JPG).",
+      "Tento typ súboru nie je podporovaný. Prosím, použite súbor CSV, Excel, PDF, OFX alebo obrázok (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -29,7 +29,7 @@ const skImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Podporuje CSV, PDF, OFX a obrázky do 10 MB",
+    message: "Podporuje CSV, Excel, PDF, OFX a obrázky do 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -47,7 +47,7 @@ const skImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF, OFX súbory a obrázky sa analyzujú automaticky pomocou AI — bez manuálneho formátovania.",
+      "Excel, PDF, OFX súbory a obrázky sa analyzujú automaticky pomocou AI — bez manuálneho formátovania.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -95,7 +95,7 @@ const skImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Analyzujte PDF, OFX a obrázky automaticky pomocou AI",
+    message: "Analyzujte Excel, PDF, OFX a obrázky automaticky pomocou AI",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

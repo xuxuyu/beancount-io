@@ -14,7 +14,7 @@ const bgImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Този тип файл не се поддържа. Моля, използвайте CSV, PDF, OFX или изображение (PNG, JPG).",
+      "Този тип файл не се поддържа. Моля, използвайте CSV, Excel, PDF, OFX или изображение (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const bgImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Поддържа CSV, PDF, OFX и изображения до 10 MB",
+    message: "Поддържа CSV, Excel, PDF, OFX и изображения до 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const bgImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "PDF, OFX файлове и изображения се анализират автоматично с AI — без ръчно форматиране.",
+      "Excel, PDF, OFX файлове и изображения се анализират автоматично с AI — без ръчно форматиране.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -97,7 +97,7 @@ const bgImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Анализирайте PDF, OFX и изображения автоматично с AI",
+    message: "Анализирайте Excel, PDF, OFX и изображения автоматично с AI",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

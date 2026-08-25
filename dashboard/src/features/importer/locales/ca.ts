@@ -14,7 +14,7 @@ const caImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Aquest tipus de fitxer no és compatible. Utilitzeu un fitxer CSV, PDF, OFX o imatge (PNG, JPG).",
+      "Aquest tipus de fitxer no és compatible. Utilitzeu un fitxer CSV, Excel, PDF, OFX o imatge (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const caImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Compatible amb CSV, PDF, OFX i imatges fins a 10 MB",
+    message: "Compatible amb CSV, Excel, PDF, OFX i imatges fins a 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const caImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "Els PDF, fitxers OFX i imatges s'analitzen automàticament amb IA — sense formatació manual.",
+      "Els fitxers Excel, PDF, OFX i imatges s'analitzen automàticament amb IA — sense formatació manual.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -97,7 +97,7 @@ const caImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Analitzeu fitxers PDF, OFX i imatges automàticament amb IA",
+    message: "Analitzeu fitxers Excel, PDF, OFX i imatges automàticament amb IA",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

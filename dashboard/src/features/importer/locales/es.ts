@@ -14,7 +14,7 @@ const esImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.unsupportedFormatError": {
     message:
-      "Este tipo de archivo no es compatible. Por favor, use un archivo CSV, PDF, OFX o imagen (PNG, JPG).",
+      "Este tipo de archivo no es compatible. Por favor, use un archivo CSV, Excel, PDF, OFX o imagen (PNG, JPG).",
     description: "Error message for unsupported file format",
   },
   "importer.upload.parsingFile": {
@@ -30,7 +30,7 @@ const esImporter: Record<string, TranslationEntry> = {
     description: "Instructions for drag and drop upload",
   },
   "importer.upload.supportedFormats": {
-    message: "Compatible con CSV, PDF, OFX e imágenes de hasta 10 MB",
+    message: "Compatible con CSV, Excel, PDF, OFX e imágenes de hasta 10 MB",
     description: "Supported file formats hint",
   },
   "importer.upload.chooseFile": {
@@ -48,7 +48,7 @@ const esImporter: Record<string, TranslationEntry> = {
   },
   "importer.upload.aiProcessingHint": {
     message:
-      "Los PDF, archivos OFX e imágenes se analizan automáticamente con IA — sin formateo manual.",
+      "Los archivos Excel, PDF, OFX e imágenes se analizan automáticamente con IA — sin formateo manual.",
     description: "Hint about AI processing for non-CSV files",
   },
 
@@ -96,7 +96,7 @@ const esImporter: Record<string, TranslationEntry> = {
     description: "Label for premium upgrade option",
   },
   "importer.error.upgradeDescription": {
-    message: "Analiza archivos PDF, OFX e imágenes automáticamente con IA",
+    message: "Analiza archivos Excel, PDF, OFX e imágenes automáticamente con IA",
     description: "Description of premium parsing features",
   },
   "importer.error.upgradeNow": {

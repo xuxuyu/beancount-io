@@ -2,7 +2,9 @@
  * File format detection utility for the importer
  */
 
-export type FileFormat = "csv" | "pdf" | "ofx" | "image" | "unknown";
+import type { FileFormat } from "../types";
+
+export type { FileFormat } from "../types";
 
 /**
  * Detect file format based on file extension and MIME type
@@ -26,6 +28,18 @@ export function detectFileFormat(file: File): FileFormat {
     return "ofx";
   }
 
+  // Excel detection. Check the extension first because some browsers report
+  // .xlsx files with the legacy application/vnd.ms-excel MIME type.
+  if (extension === "xlsx") return "xlsx";
+  if (extension === "xls") return "xls";
+  if (
+    mimeType ===
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ) {
+    return "xlsx";
+  }
+  if (mimeType === "application/vnd.ms-excel") return "xls";
+
   // Image detection
   if (
     ["png", "jpg", "jpeg"].includes(extension || "") ||
@@ -45,6 +59,8 @@ export function getFormatDisplayName(format: FileFormat): string {
     csv: "CSV",
     pdf: "PDF",
     ofx: "OFX",
+    xlsx: "Excel",
+    xls: "Excel",
     image: "Image",
     unknown: "Unknown",
   };
@@ -55,7 +71,7 @@ export function getFormatDisplayName(format: FileFormat): string {
  * Check if file format is supported
  */
 export function isSupportedFormat(format: FileFormat): boolean {
-  return ["csv", "pdf", "ofx", "image"].includes(format);
+  return ["csv", "pdf", "ofx", "xlsx", "xls", "image"].includes(format);
 }
 
 /**
@@ -71,6 +87,10 @@ export function getMimeType(fileName: string, format: FileFormat): string {
       return "text/csv";
     case "ofx":
       return "application/x-ofx";
+    case "xlsx":
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case "xls":
+      return "application/vnd.ms-excel";
     case "image":
       if (extension === "png") return "image/png";
       if (extension === "jpg" || extension === "jpeg") return "image/jpeg";
