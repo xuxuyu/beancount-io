@@ -94,7 +94,13 @@ export async function startServer(): Promise<void> {
           const url = new URL(origin);
           const hostname = url.hostname;
 
-          // Allow any subdomain of beancount.io (production/staging)
+          // Allow the configured dashboard exactly. Self-hosted deployments
+          // commonly serve the dashboard from a non-beancount.io domain.
+          if (origin === config.dashboard.url) {
+            return origin;
+          }
+
+          // Keep the hosted production/staging domains working.
           if (
             hostname === "beancount.io" ||
             hostname.endsWith(".beancount.io")
