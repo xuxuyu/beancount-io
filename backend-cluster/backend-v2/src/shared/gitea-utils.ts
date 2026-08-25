@@ -14,8 +14,13 @@ export const generateGiteaUrl = (config: GiteaConfig, fullName: string) => {
   const includePort = config.externalHttpPort !== standardPort;
   const portSuffix = includePort ? `:${config.externalHttpPort}` : "";
 
+  const directHttpUrl = `${protocol}://${config.hostname}${portSuffix}/${fullName}.git`;
+  const publicHttpBaseUrl = config.publicHttpBaseUrl?.replace(/\/$/, "");
+
   return {
     sshUrl: `ssh://git@${config.hostname}:${config.sshPort}/${fullName}.git`,
-    httpUrl: `${protocol}://${config.hostname}${portSuffix}/${fullName}.git`,
+    httpUrl: publicHttpBaseUrl
+      ? `${publicHttpBaseUrl}/${fullName}.git`
+      : directHttpUrl,
   };
 };

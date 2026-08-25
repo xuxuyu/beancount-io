@@ -51,6 +51,13 @@ interface DashboardConfig {
 
 export interface GiteaConfig {
   hostname: string;
+  /**
+   * Optional public base URL for Git Smart HTTP requests. Self-hosted
+   * deployments use backend-v2's `/git` proxy here so users authenticate with
+   * their application email/password instead of the opaque Gitea password.
+   * When omitted, clone URLs continue to point directly at Gitea.
+   */
+  publicHttpBaseUrl?: string;
   internalHostname: string;
   httpPort: number;
   /**
@@ -335,6 +342,7 @@ function giteaInternalBaseUrl(hostname: string, port: number): string {
 const giteaInternalHostname = process.env.GITEA_HOST_NAME || "gitea";
 const giteaHttpPort = parseInt(process.env.GITEA_HTTP_PORT || "3000", 10);
 const environment = getEnvironment(process.env.NODE_ENV);
+const gitHttpProxyBaseUrl = process.env.GIT_HTTP_PROXY_BASE_URL?.trim();
 const dashboardUrl = getOAuthPublicUrl(
   process.env.DASHBOARD_URL,
   "https://beancount.io",
@@ -391,6 +399,14 @@ export const config: AppConfig = {
   },
   gitea: {
     hostname: process.env.EXTERNAL_GITEA_HOST_NAME || "git.beancount.io",
+    publicHttpBaseUrl: gitHttpProxyBaseUrl
+      ? getOAuthPublicUrl(
+          gitHttpProxyBaseUrl,
+          gitHttpProxyBaseUrl,
+          "GIT_HTTP_PROXY_BASE_URL",
+          environment,
+        )
+      : undefined,
     internalHostname: giteaInternalHostname,
     httpPort: giteaHttpPort,
     internalBaseUrl: giteaInternalBaseUrl(giteaInternalHostname, giteaHttpPort),

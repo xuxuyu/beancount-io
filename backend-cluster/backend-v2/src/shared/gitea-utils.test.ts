@@ -4,6 +4,25 @@ import { generateGiteaUrl } from "./gitea-utils";
 
 describe("generateGiteaUrl", () => {
   describe("HTTP URL generation", () => {
+    it("should use the configured application-auth Git proxy", () => {
+      const config: GiteaConfig = {
+        hostname: "git.example.com",
+        publicHttpBaseUrl: "https://api.example.com/git/",
+        internalHostname: "gitea",
+        httpPort: 3000,
+        internalBaseUrl: "http://gitea:3000",
+        externalHttpPort: 443,
+        sshPort: 2222,
+      };
+
+      const result = generateGiteaUrl(config, "user/repo");
+
+      expect(result.httpUrl).toBe("https://api.example.com/git/user/repo.git");
+      expect(result.sshUrl).toBe(
+        "ssh://git@git.example.com:2222/user/repo.git",
+      );
+    });
+
     it("should generate HTTP URL with externalHttpPort", () => {
       const config: GiteaConfig = {
         hostname: "192.168.4.49",

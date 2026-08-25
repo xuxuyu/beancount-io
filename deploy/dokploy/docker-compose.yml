@@ -72,6 +72,11 @@ services:
     <<: *backend-image
     restart: unless-stopped
     logging: *default-logging
+    # Git-over-SSH terminates in backend-v2 so SSH and HTTP enforce the same
+    # authentication and push policy. The listener starts only when both
+    # SSH_PROXY_ENABLED=true and SSH_PROXY_HOST_KEY are configured.
+    ports:
+      - "${SSH_PORT:-2222}:${SSH_PORT:-2222}"
     networks:
       - dokploy
       - private
@@ -126,6 +131,7 @@ services:
       GITEA_HTTP_PORT: 3000
       EXTERNAL_GITEA_HOST_NAME: ${GIT_DOMAIN:?Set GIT_DOMAIN in .env}
       EXTERNAL_GITEA_HTTP_PORT: 443
+      GIT_HTTP_PROXY_BASE_URL: https://${API_DOMAIN:?Set API_DOMAIN in .env}/git
       GITEA_SSH_PORT: ${SSH_PORT:-2222}
       SSH_PROXY_ENABLED: ${SSH_PROXY_ENABLED:-false}
       SSH_PROXY_PORT: ${SSH_PORT:-2222}

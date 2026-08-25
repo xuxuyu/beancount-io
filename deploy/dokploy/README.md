@@ -112,6 +112,15 @@ successfully:
 
 All long-running services should become healthy.
 
+The dashboard's HTTP clone URL uses backend-v2's authenticated Git proxy:
+
+```text
+https://beancount-api.4ree.com/git/<username>/<repository>.git
+```
+
+At Git's credential prompt, use the Beancount account's complete email address
+and normal Beancount password. Do not use the internal Gitea username here.
+
 ## Add domains in Dokploy
 
 After containers are created, add these domains:
@@ -132,5 +141,44 @@ curl -fsS https://beancount-git.4ree.com/api/healthz
 curl -I https://beancount.4ree.com/
 ```
 
-Do not enable SSH yet. Phase 2 extracts Gitea's existing host key, adds the
-2222 port mapping, and then enables the backend SSH policy proxy.
+Do not enable SSH yet. Phase 2 extracts Gitea's existing host key and then
+enables the backend SSH policy proxy. Compose already publishes TCP 2222 from
+`backend-v2`; the process intentionally has no listener until both SSH settings
+are present.
+
+## Enable Git over SSH
+
+The proxy must reuse Gitea's existing Ed25519 host key. From the server, resolve
+the running Gitea container and write the key to a root-only temporary file:
+
+```bash
+GITEA_CONTAINER_ID="$(docker ps \
+  --filter label=com.docker.compose.project=beancount-io-dokploy \
+  --filter label=com.docker.compose.service=gitea \
+  --format '{{.ID}}' | head -n 1)"
+test -n "$GITEA_CONTAINER_ID"
+umask 077
+docker exec "$GITEA_CONTAINER_ID" \
+  cat /data/ssh/ssh_host_ed25519_key > /tmp/beancount-gitea-host-key
+```
+
+Copy the complete private key into Dokploy as a quoted multiline value, then
+enable the proxy:
+
+```dotenv
+SSH_PROXY_ENABLED=true
+SSH_PROXY_HOST_KEY='-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----'
+```
+
+Redeploy, confirm the backend log contains `ssh proxy listening`, then delete
+the temporary file:
+
+```bash
+rm -f /tmp/beancount-gitea-host-key
+```
+
+Keep `beancount-git.4ree.com` DNS-only in Cloudflare and allow inbound TCP 2222
+in the server/provider firewall. Users add their public key in **Settings → SSH
+Keys** before cloning with the SSH URL shown by the dashboard.
