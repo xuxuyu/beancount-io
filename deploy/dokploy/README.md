@@ -51,6 +51,23 @@ Do not enter a URL or either service hostname here.
 
 Use a real administrator email for `GITEA_ADMIN_EMAIL`.
 
+## OAuth signing key for sandbox agents
+
+The default `AGENT_MODE=self-hosted` runs the Agent and its tools in the same
+backend process, so it does not need `OAUTH_JWKS`. If you switch to
+`AGENT_MODE=sandbox`, the external Agent authenticates its MCP request with a
+short-lived OAuth token and production needs a persistent private P-256/ES256
+JWKS. Run this command on a trusted machine with Node.js installed:
+
+```bash
+node -e 'const {generateKeyPairSync,randomUUID}=require("node:crypto"); const {privateKey}=generateKeyPairSync("ec",{namedCurve:"P-256"}); const key=privateKey.export({format:"jwk"}); process.stdout.write(JSON.stringify({keys:[{...key,kid:randomUUID(),alg:"ES256",use:"sig"}]})+"\n")'
+```
+
+Copy the complete one-line JSON output into Dokploy as the value of
+`OAUTH_JWKS`, without committing it to Git. Keep this value stable and include
+it in encrypted deployment-secret backups. Rotating it invalidates OAuth access
+tokens issued with the previous key.
+
 ## Self-hosted subscription tier
 
 Dokploy defaults all accounts in this installation to the Enterprise tier,

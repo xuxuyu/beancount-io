@@ -19,6 +19,12 @@ export class SandboxProxyAgentHandler implements IAgentHandler {
   async handle(ctx: AgentHandlerContext, res: ServerResponse): Promise<void> {
     const { messages, ledgerId, mcpUrl, mcpToken, sessionId } = ctx;
 
+    if (!mcpUrl || !mcpToken) {
+      throw new InternalServerError(
+        "Sandbox MCP credentials are not configured",
+      );
+    }
+
     const sandboxResponse = await fetch(this.sandboxApiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

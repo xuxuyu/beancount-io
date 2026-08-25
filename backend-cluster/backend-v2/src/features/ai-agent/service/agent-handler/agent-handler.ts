@@ -15,8 +15,10 @@ export interface AgentHandlerContext {
    */
   services: ToolServices;
   identity: Identity;
-  mcpToken: string;
-  mcpUrl: string;
+  /** Present only when the agent runs in the external sandbox. */
+  mcpToken?: string;
+  /** Present only when the agent runs in the external sandbox. */
+  mcpUrl?: string;
   sessionId?: string;
 }
 

@@ -1,12 +1,13 @@
 import Router from "@koa/router";
 import { type UIMessage } from "ai";
 import { type AppLayers } from "@/foundation/composition";
-import { AppConfig } from "@/config/config";
+import type { AppConfig } from "@/config/config";
 import { logger } from "@/shared/logger";
 import { BadUserInputError } from "@/shared/errors";
 import { resolveAuthUser } from "../utils/route-guards";
 import { generateOAuthToken } from "@/features/oauth/utils/oauth-token-gen";
 import {
+  SandboxProxyAgentHandler,
   SelfHostedAgentHandler,
   type IAgentHandler,
 } from "../service/agent-handler";
@@ -14,17 +15,33 @@ import { createFallbackLanguageModel } from "@/features/llm/utils/fallback-langu
 
 const agentLogger = logger.child({ module: "agent-routes" });
 
+export async function getAgentMcpConnection(
+  userId: string,
+  ledgerId: string,
+  config: AppConfig,
+): Promise<{ mcpToken?: string; mcpUrl?: string }> {
+  if (config.agent.mode !== "sandbox") return {};
+
+  return {
+    mcpToken: await generateOAuthToken(userId, ledgerId, config),
+    mcpUrl: `${config.server.url}/api-gateway/mcp`,
+  };
+}
+
 export function setAgentRoute(
   router: Router,
   layers: AppLayers,
   config: AppConfig,
 ): void {
-  const handler: IAgentHandler = new SelfHostedAgentHandler(
-    createFallbackLanguageModel(config.blockeden.accessKey),
-    layers.services.aiCfoUsage,
-    layers.services.llm,
-    layers.workflows.ledgerReceipt,
-  );
+  const handler: IAgentHandler =
+    config.agent.mode === "sandbox"
+      ? new SandboxProxyAgentHandler(config.agent.sandboxApiUrl)
+      : new SelfHostedAgentHandler(
+          createFallbackLanguageModel(config.blockeden.accessKey),
+          layers.services.aiCfoUsage,
+          layers.services.llm,
+          layers.workflows.ledgerReceipt,
+        );
 
   router.post("/api-gateway/agent", async (ctx) => {
     agentLogger.debug("Received agent request");
@@ -58,8 +75,11 @@ export function setAgentRoute(
     );
     await layers.services.aiCfoUsage.assertQuotaAvailable(user.id);
 
-    const mcpToken = await generateOAuthToken(user.id, ledgerId, config);
-    const mcpUrl = `${config.server.url}/api-gateway/mcp`;
+    const mcpConnection = await getAgentMcpConnection(
+      user.id,
+      ledgerId,
+      config,
+    );
 
     ctx.respond = false;
     await handler.handle(
@@ -73,8 +93,7 @@ export function setAgentRoute(
           apiKey: layers.services.apiKey,
         },
         identity,
-        mcpToken,
-        mcpUrl,
+        ...mcpConnection,
         sessionId,
       },
       ctx.res,
