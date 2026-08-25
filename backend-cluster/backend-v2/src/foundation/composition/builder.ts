@@ -78,7 +78,11 @@ export function buildServiceLayer(input: {
   clients: ClientFactoryLayer;
   config: AppConfig;
 }): ServiceLayer {
-  const stripe = new StripeService(input.database.models, input.database.db);
+  const stripe = new StripeService(
+    input.database.models,
+    input.database.db,
+    input.config.stripe.tierOverride,
+  );
   const apiKey = new ApiKeyService({
     db: input.database.db,
     models: input.database.models,

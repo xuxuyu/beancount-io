@@ -65,6 +65,9 @@ FAVA_API_ADMIN_PASSWORD=your_password
 AUTH_SECRET=your_jwt_secret
 # Production sibling domains: shared parent domain, for example .example.com
 AUTH_COOKIE_DOMAIN=
+# Optional deployment-wide billing override for self-hosted installations.
+# FREE, PREMIUM, GROWTH, ORGANIZATION, or ENTERPRISE.
+SELF_HOSTED_TIER=
 SERVER_URL=http://localhost:4104
 DASHBOARD_URL=http://localhost:5173
 # Optional: login/register JWT lifetime in minutes (default 525600 = 365 days)

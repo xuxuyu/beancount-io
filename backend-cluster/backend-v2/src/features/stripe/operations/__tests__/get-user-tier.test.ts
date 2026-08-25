@@ -18,6 +18,7 @@ jest.mock("@/shared/logger", () => ({
 
 // StripeService is injected into the operation (not constructed); pass a stub.
 let mockStripeService: {
+  tierOverride?: SubscriptionTier;
   listSubscriptions: jest.Mock;
 };
 
@@ -49,6 +50,23 @@ describe("get-user-tier operation", () => {
   });
 
   describe("getUserTier", () => {
+    it("uses the self-hosted override without querying billing", async () => {
+      mockStripeService.tierOverride = SubscriptionTier.ENTERPRISE;
+
+      const tier = await getUserTier({
+        stripe: mockStripeService as any,
+        models: mockModels,
+        postgresDb: mockPostgresDb,
+        userId: "user-123",
+      });
+
+      expect(tier).toBe(SubscriptionTier.ENTERPRISE);
+      expect(
+        mockPaidCustomerModel.findByUserIdWithActivePeriod,
+      ).not.toHaveBeenCalled();
+      expect(mockStripeService.listSubscriptions).not.toHaveBeenCalled();
+    });
+
     it("should return PREMIUM when user has active paidCustomer subscription", async () => {
       const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       mockPaidCustomerModel.findByUserIdWithActivePeriod.mockResolvedValue({

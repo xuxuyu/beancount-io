@@ -35,6 +35,13 @@ export async function getUserTier({
   postgresDb,
   userId,
 }: GetUserTierParams): Promise<SubscriptionTier> {
+  // A self-hosted deployment can opt out of Stripe-backed billing entirely.
+  // The override lives on the injected service so every tier consumer uses the
+  // same decision while tests can still supply an isolated stub.
+  if (stripe.tierOverride) {
+    return stripe.tierOverride;
+  }
+
   const stripeService = stripe;
   try {
     // Check if user has an active subscription using the existing isPaid infrastructure

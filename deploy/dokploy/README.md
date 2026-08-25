@@ -51,6 +51,19 @@ Do not enter a URL or either service hostname here.
 
 Use a real administrator email for `GITEA_ADMIN_EMAIL`.
 
+## Self-hosted subscription tier
+
+Dokploy defaults all accounts in this installation to the Enterprise tier,
+without contacting Stripe:
+
+```dotenv
+SELF_HOSTED_TIER=ENTERPRISE
+```
+
+Supported values are `FREE`, `PREMIUM`, `GROWTH`, `ORGANIZATION`, and
+`ENTERPRISE`. The override is deployment-wide; omit it only when this instance
+is configured to use real Stripe subscriptions.
+
 ## Bootstrap the first personal account
 
 Before deploying, restrict registration to your own login email:

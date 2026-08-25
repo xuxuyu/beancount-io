@@ -35,6 +35,12 @@ export function LimitIndicator({
   const { t } = useTranslations();
   const { isReactNative } = useReactNativeContext();
 
+  // Negative limits represent an unlimited entitlement. In that case there
+  // is no limit status or upgrade prompt to display.
+  if (max < 0) {
+    return null;
+  }
+
   // Calculate usage percentage
   const percentage = (used / max) * 100;
 

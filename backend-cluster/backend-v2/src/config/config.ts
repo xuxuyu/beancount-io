@@ -1,5 +1,6 @@
 import { getOptionalJwks } from "./jwks";
 import type { ScopeEnforcementMode } from "@/server/api/op-class";
+import type { SubscriptionTier } from "@/features/stripe/service/stripe";
 
 // Type definitions for configuration
 interface ServerConfig {
@@ -85,6 +86,8 @@ interface AgentConfig {
 }
 
 interface StripeConfig {
+  /** Optional deployment-wide tier used instead of Stripe subscription lookup. */
+  tierOverride?: SubscriptionTier;
   webhookSecret: string;
   publicKey: string;
   privateKey: string;
@@ -210,6 +213,33 @@ function getEnvironment(env: unknown): Environment {
     default:
       return "production";
   }
+}
+
+const SUBSCRIPTION_TIER_NAMES = [
+  "FREE",
+  "PREMIUM",
+  "GROWTH",
+  "ORGANIZATION",
+  "ENTERPRISE",
+] as const;
+
+export function getSelfHostedTierOverride(
+  value: string | undefined,
+): SubscriptionTier | undefined {
+  const configured = value?.trim().toUpperCase();
+  if (!configured) return undefined;
+
+  if (
+    !SUBSCRIPTION_TIER_NAMES.includes(
+      configured as (typeof SUBSCRIPTION_TIER_NAMES)[number],
+    )
+  ) {
+    throw new Error(
+      `SELF_HOSTED_TIER must be one of: ${SUBSCRIPTION_TIER_NAMES.join(", ")}`,
+    );
+  }
+
+  return configured as SubscriptionTier;
 }
 
 export function getAuthCookieDomain(
@@ -418,6 +448,7 @@ export const config: AppConfig = {
     gaMeasurementId: "G-94TFG6X2Q5",
   },
   stripe: {
+    tierOverride: getSelfHostedTierOverride(process.env.SELF_HOSTED_TIER),
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
     publicKey: process.env.STRIPE_PUBLIC_KEY || "",
     privateKey: process.env.STRIPE_PRIVATE_KEY || "",

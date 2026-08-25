@@ -1,5 +1,8 @@
 import Stripe from "stripe";
-import { SUBSCRIPTION_CONFIG } from "@/features/stripe/service/stripe";
+import {
+  SUBSCRIPTION_CONFIG,
+  type SubscriptionTier,
+} from "@/features/stripe/service/stripe";
 import { IModels } from "@/foundation/models";
 import { logger } from "@/shared/logger";
 import { config } from "@/config/config";
@@ -15,6 +18,8 @@ function isNoSuchSubscriptionError(error: unknown): boolean {
 }
 
 export interface IStripeService {
+  /** Deployment-wide override for self-hosted installations. */
+  readonly tierOverride?: SubscriptionTier;
   getStripeInstance(clientId: string): Stripe;
   handleCheckoutSessionCompleted(
     session: Stripe.Checkout.Session,
@@ -84,6 +89,7 @@ export class StripeService implements IStripeService {
   constructor(
     models: Pick<IModels, "paidCustomer">,
     postgresDb: NodePgDatabase,
+    public readonly tierOverride?: SubscriptionTier,
   ) {
     this.models = models;
     this.postgresDb = postgresDb;

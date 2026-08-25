@@ -195,6 +195,15 @@ describe("LimitIndicator", () => {
   });
 
   describe("Edge cases", () => {
+    it("should not render for an unlimited quota", () => {
+      const { container } = render(
+        <LimitIndicator used={100} max={-1} limitType="ledgers" />,
+      );
+
+      expect(container).toBeEmptyDOMElement();
+      expect(screen.queryByText("Upgrade to unlock")).not.toBeInTheDocument();
+    });
+
     it("should handle zero max gracefully (prevents division by zero)", () => {
       // This would cause percentage to be Infinity if max is 0
       // The component should handle this edge case

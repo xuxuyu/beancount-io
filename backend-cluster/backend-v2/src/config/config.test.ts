@@ -3,6 +3,7 @@ import {
   config,
   getAuthCookieDomain,
   getOAuthPublicUrl,
+  getSelfHostedTierOverride,
 } from "./config";
 
 describe("config", () => {
@@ -68,6 +69,24 @@ describe("config", () => {
       ).toThrow("AUTH_COOKIE_DOMAIN");
       expect(() => getAuthCookieDomain("localhost", "production")).toThrow(
         "AUTH_COOKIE_DOMAIN",
+      );
+    });
+  });
+
+  describe("self-hosted tier override", () => {
+    it("normalizes supported tiers", () => {
+      expect(getSelfHostedTierOverride("enterprise")).toBe("ENTERPRISE");
+      expect(getSelfHostedTierOverride(" PREMIUM ")).toBe("PREMIUM");
+    });
+
+    it("is disabled when unset", () => {
+      expect(getSelfHostedTierOverride(undefined)).toBeUndefined();
+      expect(getSelfHostedTierOverride("  ")).toBeUndefined();
+    });
+
+    it("rejects unknown tiers", () => {
+      expect(() => getSelfHostedTierOverride("unlimited")).toThrow(
+        "SELF_HOSTED_TIER",
       );
     });
   });
