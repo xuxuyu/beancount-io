@@ -49,6 +49,7 @@ export async function extractTransactionsFromFile({
     fileUrl,
     format,
     mediaType,
+    preferPdfText: true,
     prompts: {
       system: buildTransactionSystemPrompt,
       text: buildTransactionTextAnalysisPrompt,

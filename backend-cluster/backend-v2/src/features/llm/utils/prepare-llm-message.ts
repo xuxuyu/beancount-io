@@ -1,7 +1,11 @@
 import { type ImagePart, type FilePart, type ModelMessage } from "ai";
 import { classifyFile, resolveMediaType } from "./media-type-utils";
 import { ServiceUnavailableError } from "@/shared/errors";
+import { logger } from "@/shared/logger";
 import { decodeUploadedText } from "./decode-text";
+import { extractPdfText, hasUsefulPdfText } from "./extract-pdf-text";
+
+const prepareMessageLogger = logger.child({ module: "prepare-llm-message" });
 
 type PromptBuilders = {
   system: (format: string) => string;
@@ -15,11 +19,13 @@ export async function prepareLlmMessage({
   format,
   mediaType,
   prompts,
+  preferPdfText = false,
 }: {
   fileUrl: string;
   format: string;
   mediaType?: string;
   prompts: PromptBuilders;
+  preferPdfText?: boolean;
 }): Promise<{
   system: string;
   messages: ModelMessage[];
@@ -28,24 +34,51 @@ export async function prepareLlmMessage({
   const system = prompts.system(format);
   const category = classifyFile(format, mediaType);
 
-  if (category === "text") {
+  const downloadBytes = async (): Promise<Uint8Array> => {
     const response = await fetch(fileUrl);
     if (!response.ok) {
       throw new ServiceUnavailableError(
         `File download (${response.status} ${response.statusText})`.trim(),
       );
     }
-    const textContent = decodeUploadedText(await response.arrayBuffer());
-    return {
-      system,
-      textContent,
-      messages: [
-        {
-          role: "user",
-          content: prompts.text(format, textContent),
-        },
-      ],
-    };
+    return new Uint8Array(await response.arrayBuffer());
+  };
+
+  const buildTextResult = (textContent: string) => ({
+    system,
+    textContent,
+    messages: [
+      {
+        role: "user" as const,
+        content: prompts.text(format, textContent),
+      },
+    ],
+  });
+
+  if (category === "text") {
+    return buildTextResult(decodeUploadedText(await downloadBytes()));
+  }
+
+  const resolvedMediaType = resolveMediaType(format, mediaType);
+  if (preferPdfText && resolvedMediaType === "application/pdf") {
+    const pdfBytes = await downloadBytes();
+    try {
+      const textContent = await extractPdfText(pdfBytes);
+      if (hasUsefulPdfText(textContent)) {
+        prepareMessageLogger.info("Using locally extracted PDF text", {
+          characters: textContent.length,
+        });
+        return buildTextResult(textContent.replace(/\f/g, "\n"));
+      }
+      prepareMessageLogger.info(
+        "PDF has no useful embedded text; using file input fallback",
+      );
+    } catch (error) {
+      prepareMessageLogger.warn(
+        "Local PDF text extraction failed; using file input fallback",
+        { error: error instanceof Error ? error.name : "UnknownError" },
+      );
+    }
   }
 
   if (category === "image") {
@@ -63,7 +96,7 @@ export async function prepareLlmMessage({
 
   const filePart: FilePart = {
     type: "file",
-    mediaType: resolveMediaType(format, mediaType),
+    mediaType: resolvedMediaType,
     data: fileUrl,
   };
   return {

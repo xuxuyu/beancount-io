@@ -108,6 +108,11 @@ fallbacks for Chinese bank CSV files. Large text statements are divided into
 bounded batches before structured extraction; the dashboard allows up to 90
 seconds for the complete import request.
 
+For statement imports, text-based PDFs are first converted to text locally with
+Poppler and then use the same bounded-batch path. This avoids sending every PDF
+page image through an OpenAI-compatible gateway. Scanned PDFs without a usable
+text layer still fall back to Responses file input.
+
 ## Bootstrap the first personal account
 
 Before deploying, restrict registration to your own login email:

@@ -53,6 +53,7 @@ export async function callLLM({
   const result = await llmClient.generate({
     system,
     messages,
+    maxRetries: 0,
     maxOutputTokens,
     output: Output.object({
       schema: dateOptional

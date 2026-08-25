@@ -4,7 +4,7 @@
  WORKDIR /app
 
  # Install system dependencies including Yarn
- RUN apk add --no-cache git yarn
+ RUN apk add --no-cache git yarn poppler-utils
 
  # Copy package files
  COPY package.json yarn.lock* ./
@@ -25,4 +25,3 @@
 
  # Start the application
  CMD ["yarn", "start"]
-
