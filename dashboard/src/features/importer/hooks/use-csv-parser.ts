@@ -9,6 +9,7 @@ import {
   isValidRowFormat,
   isHeaderRow,
 } from "../utils/csv-validator";
+import { decodeUploadedText } from "../utils/decode-text";
 
 /**
  * Parse a single CSV line respecting quoted fields that may contain commas.
@@ -164,7 +165,11 @@ export function useCSVParser() {
 
         reader.onload = (e) => {
           try {
-            const content = e.target?.result as string;
+            const buffer = e.target?.result;
+            if (!(buffer instanceof ArrayBuffer)) {
+              throw new Error("Failed to read CSV bytes");
+            }
+            const content = decodeUploadedText(buffer);
             const result = parseCSV(content);
             setIsLoading(false);
             resolve(result);
@@ -184,7 +189,7 @@ export function useCSVParser() {
           reject(new Error(errorMessage));
         };
 
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
       });
     },
     [parseCSV, t],

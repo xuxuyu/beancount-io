@@ -83,18 +83,30 @@ is configured to use real Stripe subscriptions.
 
 ## OpenAI-compatible AI provider
 
-To use a third-party endpoint that implements OpenAI Chat Completions, set:
+To use a third-party endpoint that implements the OpenAI Responses API, set:
 
 ```dotenv
 OPENAI_API_KEY=configure-this-secret-in-dokploy
 OPENAI_BASE_URL=https://gateway.example.com/v1
 OPENAI_MODEL=provider-model-id
-OPENAI_API_MODE=chat
+OPENAI_API_MODE=responses
 ```
 
 `OPENAI_BASE_URL` must include the provider's API version path, normally `/v1`.
-Use `OPENAI_API_MODE=responses` only when the endpoint implements OpenAI's
-Responses API. The API key is read only by `backend-v2`; never commit it.
+Use `OPENAI_API_MODE=chat` only when the endpoint implements Chat Completions
+but not Responses. Chat mode cannot send PDF URL file parts, so PDF imports
+require Responses mode. The API key is read only by `backend-v2`; never commit
+it.
+
+`local-dev-placeholder` is only a boot sentinel for installations without AI
+credentials. When `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` is configured, the
+backend skips that placeholder and calls the direct provider without first
+making a failing BlockEden request.
+
+Text exports are decoded as strict UTF-8 first, with UTF-16 BOM and GB18030
+fallbacks for Chinese bank CSV files. Large text statements are divided into
+bounded batches before structured extraction; the dashboard allows up to 90
+seconds for the complete import request.
 
 ## Bootstrap the first personal account
 

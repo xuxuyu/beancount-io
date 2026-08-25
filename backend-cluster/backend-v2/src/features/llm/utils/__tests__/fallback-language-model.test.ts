@@ -1,4 +1,7 @@
-import { getOpenAIProviderSettings } from "../fallback-language-model";
+import {
+  getOpenAIProviderSettings,
+  shouldUseBlockEden,
+} from "../fallback-language-model";
 
 describe("getOpenAIProviderSettings", () => {
   it("reads an OpenAI-compatible chat endpoint", () => {
@@ -33,5 +36,19 @@ describe("getOpenAIProviderSettings", () => {
     expect(() =>
       getOpenAIProviderSettings({ OPENAI_BASE_URL: "gateway.example.test" }),
     ).toThrow("OPENAI_BASE_URL");
+  });
+});
+
+describe("shouldUseBlockEden", () => {
+  it("skips the boot placeholder when a direct provider is configured", () => {
+    expect(shouldUseBlockEden("local-dev-placeholder", true)).toBe(false);
+  });
+
+  it("preserves a real BlockEden fallback", () => {
+    expect(shouldUseBlockEden("real-access-key", true)).toBe(true);
+  });
+
+  it("preserves the boot-only placeholder when no direct provider exists", () => {
+    expect(shouldUseBlockEden("local-dev-placeholder", false)).toBe(true);
   });
 });

@@ -42,16 +42,18 @@ export async function callLLM({
   system,
   messages,
   dateOptional = false,
+  maxOutputTokens = 4096,
 }: {
   llmClient: LLMClient;
   system: string;
   messages: ModelMessage[];
   dateOptional?: boolean;
+  maxOutputTokens?: number;
 }): Promise<ExtractTransactionsResult> {
   const result = await llmClient.generate({
     system,
     messages,
-    maxOutputTokens: 4096,
+    maxOutputTokens,
     output: Output.object({
       schema: dateOptional
         ? receiptTransactionsResponseSchema

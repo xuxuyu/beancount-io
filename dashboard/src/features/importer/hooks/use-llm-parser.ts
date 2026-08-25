@@ -22,8 +22,9 @@ export function useLLMParser() {
       const { objectKey } = await uploadFile(file);
 
       // Step 2: Call GraphQL mutation with temporary asset object key
-      // NOTE: LLM parsing can take 10-30 seconds for complex files (PDFs, images)
-      // Set generous timeout to prevent premature failures
+      // Large statements can require several model passes. Keep this below the
+      // surrounding reverse proxy's request ceiling while allowing more than
+      // the old 30-second budget.
       const result = await parseFileMutation({
         variables: {
           s3ObjectKey: objectKey,
@@ -31,7 +32,7 @@ export function useLLMParser() {
         },
         context: {
           fetchOptions: {
-            signal: AbortSignal.timeout(30000), // 30 second timeout for LLM parsing
+            signal: AbortSignal.timeout(90000),
           },
         },
       });

@@ -16,6 +16,7 @@ function isNonRetriableError(err: unknown): boolean {
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
 const DEFAULT_OPENAI_MODEL = "gpt-4o";
+const BLOCKEDEN_BOOT_PLACEHOLDER = "local-dev-placeholder";
 
 export type OpenAIApiMode = "chat" | "responses";
 
@@ -25,6 +26,39 @@ export type OpenAIProviderSettings = {
   model: string;
   apiMode: OpenAIApiMode;
 };
+
+export function shouldUseBlockEden(
+  accessKey: string,
+  hasDirectProvider: boolean,
+): boolean {
+  const key = accessKey.trim();
+  if (!key) return false;
+  // Compose uses this sentinel so installations without AI credentials can
+  // still boot. Once a real direct provider is configured, never send a
+  // pointless request containing the sentinel to BlockEden first.
+  return key !== BLOCKEDEN_BOOT_PLACEHOLDER || !hasDirectProvider;
+}
+
+function summarizeProviderError(err: unknown): Record<string, unknown> {
+  if (APICallError.isInstance(err)) {
+    let endpoint: string | undefined;
+    try {
+      endpoint = err.url ? new URL(err.url).origin : undefined;
+    } catch {
+      endpoint = undefined;
+    }
+    return {
+      name: err.name,
+      statusCode: err.statusCode,
+      isRetryable: err.isRetryable,
+      endpoint,
+    };
+  }
+  if (err instanceof Error) {
+    return { name: err.name };
+  }
+  return { name: "UnknownError" };
+}
 
 function normalizeOpenAIBaseURL(value: string | undefined): string | undefined {
   const configured = value?.trim().replace(/\/+$/, "");
@@ -110,6 +144,10 @@ function createDirectAnthropicModel(key: string): LanguageModelV4 {
 export function createFallbackLanguageModel(accessKey: string): LanguageModel {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   const openaiSettings = getOpenAIProviderSettings();
+  const useBlockEden = shouldUseBlockEden(
+    accessKey,
+    Boolean(anthropicKey || openaiSettings.apiKey),
+  );
 
   const providers: LanguageModelV4[] = [];
 
@@ -117,7 +155,7 @@ export function createFallbackLanguageModel(accessKey: string): LanguageModel {
   // token), else via BlockEden.
   if (anthropicKey) {
     providers.push(createDirectAnthropicModel(anthropicKey));
-  } else if (accessKey) {
+  } else if (useBlockEden) {
     providers.push(
       createAnthropic({
         baseURL: `https://api.blockeden.xyz/anthropic/${accessKey}/v1`,
@@ -137,7 +175,7 @@ export function createFallbackLanguageModel(accessKey: string): LanguageModel {
         ? openai.chat(openaiSettings.model)
         : openai(openaiSettings.model),
     );
-  } else if (accessKey) {
+  } else if (useBlockEden) {
     providers.push(
       createOpenAI({
         baseURL: `https://api.blockeden.xyz/openai/${accessKey}/v1`,
@@ -180,7 +218,7 @@ export function createFallbackLanguageModel(accessKey: string): LanguageModel {
             "LLM provider failed in doGenerate, trying next",
             {
               modelId: p.modelId,
-              error: err,
+              error: summarizeProviderError(err),
             },
           );
           lastError = err;
@@ -200,7 +238,7 @@ export function createFallbackLanguageModel(accessKey: string): LanguageModel {
           if (isLast && isNonRetriableError(err)) throw err;
           fallbackLogger.warn("LLM provider failed in doStream, trying next", {
             modelId: p.modelId,
-            error: err,
+            error: summarizeProviderError(err),
           });
           lastError = err;
         }

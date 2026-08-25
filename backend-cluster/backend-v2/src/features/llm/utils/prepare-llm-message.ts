@@ -1,6 +1,7 @@
 import { type ImagePart, type FilePart, type ModelMessage } from "ai";
 import { classifyFile, resolveMediaType } from "./media-type-utils";
 import { ServiceUnavailableError } from "@/shared/errors";
+import { decodeUploadedText } from "./decode-text";
 
 type PromptBuilders = {
   system: (format: string) => string;
@@ -19,7 +20,11 @@ export async function prepareLlmMessage({
   format: string;
   mediaType?: string;
   prompts: PromptBuilders;
-}): Promise<{ system: string; messages: ModelMessage[] }> {
+}): Promise<{
+  system: string;
+  messages: ModelMessage[];
+  textContent?: string;
+}> {
   const system = prompts.system(format);
   const category = classifyFile(format, mediaType);
 
@@ -30,9 +35,10 @@ export async function prepareLlmMessage({
         `File download (${response.status} ${response.statusText})`.trim(),
       );
     }
-    const textContent = await response.text();
+    const textContent = decodeUploadedText(await response.arrayBuffer());
     return {
       system,
+      textContent,
       messages: [
         {
           role: "user",
